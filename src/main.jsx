@@ -17,9 +17,9 @@ const webgl2 = hasWebGL2();
 function detect() {
   if (forced === 'webgl' || forced === 'fallback' || forced === 'reduced') return forced;
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return 'reduced';
-  const w = window.innerWidth;
-  const coarse = matchMedia('(pointer: coarse)').matches;
-  if (w < 820 || (coarse && w < 1100) || !webgl2) return 'fallback';
+  // phones get the full 3D journey too; the CSS version is for devices that cannot run it
+  const lowMemory = navigator.deviceMemory !== undefined && navigator.deviceMemory < 3;
+  if (!webgl2 || lowMemory) return 'fallback';
   return 'webgl';
 }
 

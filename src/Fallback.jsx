@@ -75,7 +75,7 @@ export default function Fallback({ reduced, onReady }) {
               // cover-sized box in plate proportions, so HTML can be pinned in plate percentages
               <div className="fb-plate" style={{ '--ox': L.vp[0] / PLATE_W, '--oy': L.vp[1] / PLATE_H }}>
                 <img
-                  src={BASE + (wide ? L.src.replace('-m.', '.') : L.src)}
+                  src={BASE + (wide || i === 0 ? L.src.replace('-m.', '.') : L.src)}
                   alt=""
                   crossOrigin="anonymous"
                   decoding="async"

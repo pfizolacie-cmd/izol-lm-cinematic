@@ -153,7 +153,7 @@ html[data-debug] .finale, html[data-debug] .finale-scrim { transition: none; }
 @media (max-width: 819px) {
   .rail { display: none; }
   .hint { left: auto; right: 18px; transform: none; justify-items: end; }
-  .fb-brand { display: none; } /* the panel is wider than a phone; the HUD carries the brand */
+  .fb-brand, .trk-panel { display: none !important; } /* the panel is wider than a phone; the HUD carries the brand */
   .finale { top: auto; bottom: 36px; transform: translateY(16px); }
   .finale.on { transform: none; }
   .finale-scrim { background: linear-gradient(0deg, rgba(6, 8, 11, 0.88), rgba(6, 8, 11, 0.5) 55%, rgba(6, 8, 11, 0.1)); }

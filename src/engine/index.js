@@ -72,7 +72,15 @@ export function createEngine(gl) {
   let tankReady = false;
 
   const post = createComposite();
-  const rt = new THREE.WebGLRenderTarget(2, 2, { type: THREE.HalfFloatType, samples: 2, depthBuffer: true });
+  const coarse = matchMedia('(pointer: coarse)').matches;
+  // half-float needs a renderable float colour buffer; GPUs without one get 8-bit instead of a black frame
+  const canHalf = gl.extensions.has('EXT_color_buffer_float') || gl.extensions.has('EXT_color_buffer_half_float');
+  const rt = new THREE.WebGLRenderTarget(2, 2, {
+    type: canHalf ? THREE.HalfFloatType : THREE.UnsignedByteType,
+    samples: coarse ? 0 : 2, // MSAA on a phone GPU costs more than it shows
+    depthBuffer: true,
+  });
+  const Q_MIN = coarse ? 0.5 : 0.6;
   post.uniforms.tScene.value = rt.texture;
 
   let aspect = 16 / 9, cssW = 1, cssH = 1, dprNow = 1;
@@ -267,7 +275,7 @@ export function createEngine(gl) {
       qAcc += dt; qN++;
       if (qAcc > 1.2) {
         const avg = qAcc / qN;
-        if (avg > 1 / 45 && quality > 0.6) { quality = Math.max(0.6, quality - 0.1); applySize(); }
+        if (avg > 1 / 45 && quality > Q_MIN) { quality = Math.max(Q_MIN, quality - 0.1); applySize(); }
         else if (avg < 1 / 58 && quality < 1) { quality = Math.min(1, quality + 0.05); applySize(); }
         qAcc = 0; qN = 0;
       }
