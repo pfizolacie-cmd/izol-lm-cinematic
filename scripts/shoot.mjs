@@ -38,8 +38,13 @@ console.log(`ready in ${readyMs} ms · mode=${info.mode} · ${info.gpu} · ${w}x
 
 async function goTo(p) {
   await page.evaluate((p) => window.scrollTo(0, p * (document.documentElement.scrollHeight - innerHeight)), p);
+  // wait for the target to reach p first: right after scrollTo, value == target can still hold at the old position
   await page
-    .waitForFunction(() => { const pr = window.__izolP; return pr && Math.abs(pr.value - pr.target) < 0.0004; }, { timeout: 20000, polling: 50 })
+    .waitForFunction(
+      (p) => { const pr = window.__izolP; return pr && Math.abs(pr.target - p) < 0.002 && Math.abs(pr.value - pr.target) < 0.0004; },
+      { timeout: 20000, polling: 50 },
+      p,
+    )
     .catch(() => logs.push(`[test] progress did not settle at ${p}`));
   await new Promise((r) => setTimeout(r, 350));
 }
